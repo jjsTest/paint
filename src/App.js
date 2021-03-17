@@ -11,20 +11,44 @@ function App() {
   useEffect(() => {
     if(canvasRef.current){
       const ct = canvasRef.current.getContext('2d');
-      canvasRef.current.addEventListener("mousedown");
-      canvasRef.current.addEventListener("mousemove");
-      canvasRef.current.addEventListener("mouseup");
-      canvasRef.current.addEventListener("mouseout");
+      canvasRef.current.addEventListener("mousedown", startDraw);
+      canvasRef.current.addEventListener("mousemove", drawing);
+      canvasRef.current.addEventListener("mouseup", stopDraw);
+      canvasRef.current.addEventListener("mouseout", stopDraw);
     }
-  },[canvasRef.current]);
+  },[]);
 
-  function mousedown(event){
-    ct.beginPath();
+  function getPos(event){
+    return
+      {
+        x: event.offsetX,
+        y: event.offsetY
+      };
+
   }
+
+  function startDraw(event){
+    ct.beginPath();
+    pos = {getPos(event)};
+    ct.moveTo(pos.x, pos.y);
+  }
+
+  function drawing(event){
+    pos ={...pos, ...getPos(event)};
+    ct.lineTo(pos.x, pos.y);
+    ct.stroke();
+  }
+
+  function stopDraw(event){
+    pos = {
+      x:-1,
+      y:-1};
+  }
+
   return (
     <div className ="App">
       <canvas ref = {canvasRef} 
-              style={{width="500", height="300"}}
+              style={{width="500" height="300"}}
               onMouseDown={} />
 
     </div>
