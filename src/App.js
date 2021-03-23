@@ -1,76 +1,77 @@
 import React, {useEffect, useRef} from 'react';
+import reactDom from 'react-dom';
 import './App.css';
 
 function App() {
   const canvasRef = useRef(null); 
-  const pos = {
+  let pos = {
     x: -1,
     y: -1
   };
+  let ct = null;
+  let move = false;
 
-  useEffect(() => {
-    if(canvasRef.current){
-      const ct = canvasRef.current.getContext('2d');
-      canvasRef.current.addEventListener("mousedown", startDraw);
-      canvasRef.current.addEventListener("mousemove", drawing);
-      canvasRef.current.addEventListener("mouseup", stopDraw);
-      canvasRef.current.addEventListener("mouseout", stopDraw);
-    }
-  },[]);
+   useEffect(() => {
+     ct = canvasRef.current.getContext('2d');
+     canvasRef.current.addEventListener("mousedown", startDraw);
+     canvasRef.current.addEventListener("mousemove", drawing);
+     canvasRef.current.addEventListener("mouseup", stopDraw);
+     canvasRef.current.addEventListener("mouseout", stopDraw);
+
+   },[]);
 
   function getPos(event){
-    return
-      {
+    return(
+      { 
         x: event.offsetX,
         y: event.offsetY
-      };
+      }
+    );
 
   }
 
   function startDraw(event){
+    move = true;
     ct.beginPath();
-    pos = {getPos(event)};
+    pos = {...getPos(event)};
+    //alert(('x:'+pos.x+',y:'+pos.y));
     ct.moveTo(pos.x, pos.y);
   }
 
   function drawing(event){
-    pos ={...pos, ...getPos(event)};
+    if(move){
+   // pos ={...pos, ...getPos(event)};
+    pos ={...getPos(event)};
+    //onsole.log(('x:'+pos.x+',y:'+pos.y));
     ct.lineTo(pos.x, pos.y);
     ct.stroke();
+    }
   }
 
   function stopDraw(event){
+    move = false;
     pos = {
       x:-1,
       y:-1};
   }
 
+  function redo(){
+    ct=null;
+  }
   return (
-    <div className ="App">
+    <div className="App" >
+      <h1>Paint</h1>
+      <button id ="redo" onclick={redo}>Redo</button>
+      <button id ="undo" onclick=";">Undo</button>
+      <button id ="save" onclick=";">Save</button> <br/><br/>
       <canvas ref = {canvasRef} 
-              style={{width="500" height="300"}}
-              onMouseDown={} />
+              style={{width:"800", height:"500", border: '1px solid black'}}/>
+
+     {/* 탭처럼 굵기, 색상(글자, 배경) + 도형? */}
 
     </div>
 
-    // <div className="App">
-    //   <header className="App-header">
-    //     <img src={logo} className="App-logo" alt="logo" />
-    //     <p>
-    //       Edit <code>src/App.js</code> and save to reload.
-    //     </p>
-    //     <a
-    //       className="App-link"
-    //       href="https://reactjs.org"
-    //       target="_blank"
-    //       rel="noopener noreferrer"
-    //     >
-    //       Learn React
-    //     </a>
-    //   </header>
-    // </div>
   );
 }
-
 
 export default App;
