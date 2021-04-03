@@ -1,5 +1,6 @@
-import React, {useEffect, useRef} from 'react';
-import reactDom from 'react-dom';
+import React, {useEffect, useRef, useState,useCallback} from 'react';
+import {CirclePicker} from 'react-color';
+//import reactDom from 'react-dom';
 import './App.css';
 
 function App() {
@@ -10,6 +11,34 @@ function App() {
   };
   let ct = null;
   let move = false;
+
+  const [lineWidth, setLineWidth] = useState(1);  //선 굵기
+  const [bgColor, setBgColor] = useState('#fff');
+
+  //선 굵기 증가
+  const onIncrease= useCallback(() => {
+    setLineWidth(lineWidth=>lineWidth +5);
+    ct.lineWidth = ct.lineWidth+5;
+    console.log("onincrease_lnewidth:"+lineWidth);
+    console.log("onincrease_ct.linewidth:"+ct.lineWidth);
+  },[]);
+
+  //선 굵기 감소
+  const onDecrease= useCallback(() => {
+   setLineWidth(lineWidth=>lineWidth-5);
+    ct.lineWidth = ct.lineWidth-5;
+    console.log("ondecrease_lnewidth:"+lineWidth);
+    console.log("ondecrease_ct.linewidth:"+ct.lineWidth);
+  },[]);
+
+  //배경색 변경
+  const onBgColorChange= useCallback((color) => {
+    console.log("bgcolor:"+bgColor);
+    setBgColor(color.hex);
+    console.log("postbgcolor:"+bgColor);
+    ct.fillStyle=bgColor;
+    ct.fillRect(0,0,canvasRef.current.width,canvasRef.current.height);
+  },[]);
 
    useEffect(() => {
      ct = canvasRef.current.getContext('2d');
@@ -33,6 +62,8 @@ function App() {
   function startDraw(event){
     move = true;
     ct.beginPath();
+    //ct.lineWidth = lineWidth;
+    //console.log("startDraw_lineWidth:"+lineWidth);
     pos = {...getPos(event)};
     //alert(('x:'+pos.x+',y:'+pos.y));
     ct.moveTo(pos.x, pos.y);
@@ -61,14 +92,25 @@ function App() {
   return (
     <div className="App" >
       <h1>Paint</h1>
-      <button id ="redo" onclick={redo}>Redo</button>
-      <button id ="undo" onclick=";">Undo</button>
-      <button id ="save" onclick=";">Save</button> <br/><br/>
+      <button id ="redo" onClick={redo}>Redo</button>
+      <button id ="undo" onClick=";">Undo</button>
+      <button id ="save" onClick=";">Save</button> <br/><br/>
       <canvas ref = {canvasRef} 
               style={{width:"800", height:"500", border: '1px solid black'}}/>
 
-     {/* 탭처럼 굵기, 색상(글자, 배경) + 도형? */}
-
+      <h5>굵기</h5>
+      <button onClick={onDecrease}>-</button>
+      {lineWidth}
+      <button onClick={onIncrease}>+</button>
+      <h5>글자색</h5>
+      <div>
+        {/* <FontColorPicker color={color} onchange={onchange} /> */}
+      </div>
+      <h5>배경색</h5>
+      <div>
+        {/* <CirclePicker color={bgColor} onChange={(color) => {setBgColor(color.hex)}} /> */}
+        <CirclePicker color={bgColor} onChange={onBgColorChange} />
+      </div> 
     </div>
 
   );
