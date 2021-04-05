@@ -13,7 +13,7 @@ function App() {
   let move = false;
 
   const [lineWidth, setLineWidth] = useState(1);  //선 굵기
-  const [bgColor, setBgColor] = useState('#fff');
+  const [bgColor,setBgColor] = useState('#ff3399');
 
   //선 굵기 증가
   const onIncrease= useCallback(() => {
@@ -32,13 +32,14 @@ function App() {
   },[]);
 
   //배경색 변경
-  const onBgColorChange= useCallback((color) => {
+  const onBgColorChange= (color) => {
     console.log("bgcolor:"+bgColor);
+    //bgColor.current = color.hex;
     setBgColor(color.hex);
     console.log("postbgcolor:"+bgColor);
-    ct.fillStyle=bgColor;
-    ct.fillRect(0,0,canvasRef.current.width,canvasRef.current.height);
-  },[]);
+     ct.fillStyle=bgColor;
+     ct.fillRect(0,0,ct.width,ct.height);
+  };
 
    useEffect(() => {
      ct = canvasRef.current.getContext('2d');
@@ -96,7 +97,10 @@ function App() {
       <button id ="undo" onClick=";">Undo</button>
       <button id ="save" onClick=";">Save</button> <br/><br/>
       <canvas ref = {canvasRef} 
-              style={{width:"800", height:"500", border: '1px solid black'}}/>
+              style={{width:"800", 
+                      height:"500", 
+                      border: '1px solid black', 
+                      backgroundColor: bgColor}}/>
 
       <h5>굵기</h5>
       <button onClick={onDecrease}>-</button>
@@ -109,7 +113,7 @@ function App() {
       <h5>배경색</h5>
       <div>
         {/* <CirclePicker color={bgColor} onChange={(color) => {setBgColor(color.hex)}} /> */}
-        <CirclePicker color={bgColor} onChange={onBgColorChange} />
+        <CirclePicker color={bgColor} onChangeComplete={onBgColorChange} />
       </div> 
     </div>
 
